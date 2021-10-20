@@ -25,11 +25,15 @@ def makeBattleMenu(screen, menu):
 #Prints the battle menu and colors
 def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainText, newMainText, inventory):
 
+
     #Draw main screen box
     sh, sw = screen.getmaxyx()
     mainBox = [[sh//2 + 5, sw//4-sw//8],[sh - 5, sw//4 * 4 - sw//8]]
     textpad.rectangle(screen, mainBox[0][0], mainBox[0][1], mainBox[1][0], mainBox[1][1])
 
+    #These are here because they show up a *lot*
+    xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
+    yRange = mainBox[1][0] - mainBox[0][0]
 
 #Printing Text in Box
 
@@ -41,8 +45,21 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
 
 #----------------------------------------------#
 #Printing Menu's
+    def printSubMenu(screen, mode):
+        for row, tab in enumerate(menu):
+            screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
+            textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
+        for num, item in enumerate(menus[mode]):
+            if num == secondaryRow:
+                screen.attron(curses.color_pair(1))
+                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
+                screen.attroff(curses.color_pair(1))
+            else:
+                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
 
-
+    #Prints sub menu for each mode
+    if mode in menus:
+        printSubMenu(screen, mode)
 
 #--Default Menu--------------------------------#
 
@@ -63,50 +80,24 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
         if newMainText:
             mode, mainText, newMainText = printMain(screen, mainBox, "Alphys is cool", mode, mainText)
         else:
-            xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-            yRange = mainBox[1][0] - mainBox[0][0]
             screen.addstr((sh//2) + (yRange//3 + 1), (sh//2) + (yRange//3), "* Alphys is cool")
 
+#--Act Menu---------------------------------#
 
-#--Fight Men--------------------------------#
-
-
-    if mode == "Fight":
-        screen.addstr(sh-10, sw//2, "Fight Menu")
+    if mode == "Talk":
         for row, tab in enumerate(menu):
             screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
             textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
-
-
-#--Act Men----------------------------------#
-
-
-    if mode == "Act":
-        screen.addstr(sh-10, sw//2, "Act Menu")
-        for row, tab in enumerate(menu):
-            screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
-            textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
-
+        screen.nodelay(0)
+        screen.addstr((sh//2) + (yRange//3 + 1), (sh//2) + (yRange//3), "* You tried talking to Alphys. She doesn't seem much for conversation.")
+        screen.getch()
+        screen.nodelay(1)
+        return mainText, newMainText, "battleMenu"
 
 #--Item Menu--------------------------------#
 
 
     if mode == "Item" and len(menus['Item']) > 0:
-        xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-        yRange = mainBox[1][0] - mainBox[0][0]
-        #Print Item Menu
-        for num, item in enumerate(menus['Item']):
-            if num == secondaryRow:
-                screen.attron(curses.color_pair(1))
-                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
-                screen.attroff(curses.color_pair(1))
-            else:
-                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
-
-         #Print defaul menu
-        for row, tab in enumerate(menu):
-            screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
-            textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
 
         #Tip Menu
         tipBox = [[sh//2+5, xRange//4 * 3],[sh -5, xRange]]
@@ -138,8 +129,6 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
 
 
     elif mode == "Item" and len(menus['Item']) == 0:
-        xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-        yRange = mainBox[1][0] - mainBox[0][0]
         for row, tab in enumerate(menu):
             screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
             textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
@@ -154,8 +143,6 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
 
 
     if mode in menus['Item']:
-        xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-        yRange = mainBox[1][0] - mainBox[0][0]
         text = "* You ate the {} and gained {} health.".format(inventory[menus['Item'][secondaryRow]].name, inventory[menus['Item'][secondaryRow]].health)
         inventory[menus['Item'][secondaryRow]].use()
         if inventory[menus['Item'][secondaryRow]].useAmount == 0:
@@ -166,6 +153,7 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
         for row, tab in enumerate(menu):
             screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
             textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
+
         #Exit
         screen.nodelay(0)
         screen.addstr((sh//2) + (yRange//3 + 1), (sh//2) + (yRange//3), text)
@@ -173,35 +161,29 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
         screen.nodelay(1)
         return mainText, newMainText, "battleMenu"
 
-
-#--Mercy Menu--------------------------------#
-
-
-    if mode == "Mercy":
-        xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-        yRange = mainBox[1][0] - mainBox[0][0]
-        for row, tab in enumerate(menu):
-            screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
-            textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
-        for num, item in enumerate(menus['Mercy']):
-            if num == secondaryRow:
-                screen.attron(curses.color_pair(1))
-                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
-                screen.attroff(curses.color_pair(1))
-            else:
-                screen.addstr((sh//2) + (yRange//3 + 1) * (num%3 + 1), xRange//4 * (num//3+1), "* {}".format(item))
-
-
-    return mainText, newMainText, mode
-
-
 #--Mercy Menu Mode's------------------------#
 
 
     if mode in menus['Mercy']:
-        xRange = mainBox[1][1] - mainBox[0][1] + sw//4-sw//8
-        yRange = mainBox[1][0] - mainBox[0][0]
         for row, tab in enumerate(menu):
             screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
             textpad.rectangle(screen, menu[tab].yPos - 1, menu[tab].xPos - 2, menu[tab].yPos + 1, menu[tab].xPos + 8)
-        #if mode == "Run":
+
+        if mode == "Run":
+            screen.nodelay(0)
+            screen.addstr((sh//2) + (yRange//3 + 1), (sh//2) + (yRange//3), "* There's nowhere to run to.")
+            screen.getch()
+            screen.nodelay(1)
+            return mainText, newMainText, "battleMenu"
+
+        if mode == "Spare":
+            screen.nodelay(0)
+            screen.addstr((sh//2) + (yRange//3 + 1), (sh//2) + (yRange//3), "* It's too late for that...")
+            screen.getch()
+            screen.nodelay(1)
+            return mainText, newMainText, "battleMenu"
+
+
+#--------------------------------------------#
+#The return if nothing is chosen
+    return mainText, newMainText, mode

@@ -45,4 +45,5 @@ def getInput(screen, mode, battleRow, secondaryRow, menus):
 
         elif key == curses.KEY_RIGHT and secondaryRow < len(menus[mode])-3:
             return key, battleRow, mode, secondaryRow + 3
-        return key, battleRow, mode, secondaryRow
+
+    return key, battleRow, mode, secondaryRow

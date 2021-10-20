@@ -17,9 +17,9 @@ def main(screen):
     currentRow = 0
     secondaryRow = 0
     menu = ["Fight", "Act", "Item", "Mercy"]
-    items = ["Glamburger", "Snowman Piece", "Hot Dog", "Banana Bunch", "Butterscotch Pie"]
+    items = ["Glamburger", "Snowman Piece", "Hot Dog", "Banana", "Butterscotch Pie"]
     mercys = ["Spare", "Run"]
-    acts = ["empty for now", "Trust me it's empty"]
+    acts = ["Talk"]
     fights = ["Alphys"]
     menus = {}
     menus.update({"Item": items})
@@ -47,7 +47,8 @@ def main(screen):
         screen.addstr(5, 5, str(currentInput))
         screen.addstr(10, 10, "hi")
         if not newMainText:
-            screen.addstr(5, 15, mainText)
+            screen.addstr(5, 15, str(secondaryRow))
+            screen.addstr(10, 15, gameMode)
         if modeCheck != gameMode:
             secondaryRow = 0
         modeCheck = gameMode
