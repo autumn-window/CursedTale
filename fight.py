@@ -46,7 +46,7 @@ def main(screen):
         currentInput, currentRow, gameMode, secondaryRow = getInput(screen, gameMode, currentRow, secondaryRow, menus)
         mainText, newMainText, gameMode = printBattleMenu(screen, battleMenu, currentRow, gameMode, menus, secondaryRow, mainText, newMainText, inventory)
         if gameMode == "Alphys":
-            playerAttack(screen, gameMode, frameCounter)
+            gameMode = playerAttack(screen, gameMode, frameCounter, currentInput)
             frameCounter += 1
             if frameCounter == 149:
                 frameCounter = 0
