@@ -5,7 +5,7 @@ from menuControl import *
 import fpstimer
 from getInput import *
 from itemControl import *
-
+from playerAttack import *
 def main(screen):
 
     #innitializing
@@ -33,6 +33,7 @@ def main(screen):
     newMainText = True
     gameMode = 'battleMenu'
     modeCheck = 'battleMenu'
+    frameCounter = 0
     #Actual Main
     #1. Get game state
     #2. Get input
@@ -44,6 +45,11 @@ def main(screen):
         screen.clear()
         currentInput, currentRow, gameMode, secondaryRow = getInput(screen, gameMode, currentRow, secondaryRow, menus)
         mainText, newMainText, gameMode = printBattleMenu(screen, battleMenu, currentRow, gameMode, menus, secondaryRow, mainText, newMainText, inventory)
+        if gameMode == "Alphys":
+            playerAttack(screen, gameMode, frameCounter)
+            frameCounter += 1
+            if frameCounter == 149:
+                frameCounter = 0
         screen.addstr(5, 5, str(currentInput))
         screen.addstr(10, 10, "hi")
         if not newMainText:

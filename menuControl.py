@@ -25,6 +25,8 @@ def makeBattleMenu(screen, menu):
 #Prints the battle menu and colors
 def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainText, newMainText, inventory):
 
+    if mode == "Alphys":
+        return mainText, newMainText, mode
 
     #Draw main screen box
     sh, sw = screen.getmaxyx()
@@ -45,6 +47,8 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
 
 #----------------------------------------------#
 #Printing Menu's
+
+
     def printSubMenu(screen, mode):
         for row, tab in enumerate(menu):
             screen.addstr(menu[tab].yPos, menu[tab].xPos, menu[tab].text)
@@ -60,6 +64,7 @@ def printBattleMenu(screen, menu, currentRow, mode, menus, secondaryRow, mainTex
     #Prints sub menu for each mode
     if mode in menus:
         printSubMenu(screen, mode)
+
 
 #--Default Menu--------------------------------#
 
